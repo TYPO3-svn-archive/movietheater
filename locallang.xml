@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'movietheater'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="pi1_title">Movie</label>
+			<label index="pi1_plus_wiz_description">Shows a movie.</label>
+			<label index="tx_movietheater_films">Films</label>
+			<label index="tx_movietheater_films.title">Title</label>
+			<label index="tx_movietheater_films.originaltitle">Original Title</label>
+			<label index="tx_movietheater_films.special">Special</label>
+			<label index="tx_movietheater_films.credits">Credits</label>
+			<label index="tx_movietheater_films.teaser">Teaser</label>
+			<label index="tx_movietheater_films.description">Description</label>
+			<label index="tx_movietheater_films.images">Images</label>
+			<label index="tx_movietheater_films.imdb">imdb</label>
+			<label index="tx_movietheater_films.year">Year</label>
+			<label index="tx_movietheater_films.version">Version</label>
+			<label index="tx_movietheater_films.country">Country</label>
+			<label index="tx_movietheater_specials">Specials</label>
+			<label index="tx_movietheater_specials.title">Title</label>
+			<label index="tx_movietheater_specials.image">Image</label>
+			<label index="tx_movietheater_versions">Versions</label>
+			<label index="tx_movietheater_versions.name">Name</label>
+			<label index="tx_movietheater_versions.shortform">Short form</label>
+			<label index="tx_movietheater_shows">Shows</label>
+			<label index="tx_movietheater_shows.hall">Hall</label>
+			<label index="tx_movietheater_shows.film">Film</label>
+			<label index="tx_movietheater_shows.date">Date</label>
+			<label index="tx_movietheater_halls">Halls</label>
+			<label index="tx_movietheater_halls.name">Name</label>
+			<label index="tx_movietheater_halls.seats">Seats</label>
+			<label index="tt_content.list_type_pi1">movietheater</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="pi1_title">Film</label>
+			<label index="pi1_plus_wiz_description">Stellt einen Film dar.</label>
+			<label index="tx_movietheater_films">Filme</label>
+			<label index="tx_movietheater_films.title">Titel</label>
+			<label index="tx_movietheater_films.originaltitle">Originaltitel</label>
+			<label index="tx_movietheater_films.special">Special</label>
+			<label index="tx_movietheater_films.credits">Credits</label>
+			<label index="tx_movietheater_films.teaser">Teaser</label>
+			<label index="tx_movietheater_films.description">Beschreibung</label>
+			<label index="tx_movietheater_films.images">Bilder</label>
+			<label index="tx_movietheater_films.imdb">imdb</label>
+			<label index="tx_movietheater_films.year">Jahr</label>
+			<label index="tx_movietheater_films.version">Fassung</label>
+			<label index="tx_movietheater_films.country">Land</label>
+			<label index="tx_movietheater_specials">Besonderheiten</label>
+			<label index="tx_movietheater_specials.title">Titel</label>
+			<label index="tx_movietheater_specials.image">Bild</label>
+			<label index="tx_movietheater_versions">Fassungen</label>
+			<label index="tx_movietheater_versions.name">Name</label>
+			<label index="tx_movietheater_versions.shortform">Kürzel</label>
+			<label index="tx_movietheater_shows">Vorführungen</label>
+			<label index="tx_movietheater_shows.hall">Saal</label>
+			<label index="tx_movietheater_shows.film">Film</label>
+			<label index="tx_movietheater_shows.date">Datum</label>
+			<label index="tx_movietheater_halls">Kinosäle</label>
+			<label index="tx_movietheater_halls.name">Name</label>
+			<label index="tx_movietheater_halls.seats">Sitzplätze</label>
+			<label index="tt_content.list_type_pi1">movietheater</label>
+		</languageKey>
+	</data>
+</T3locallang>

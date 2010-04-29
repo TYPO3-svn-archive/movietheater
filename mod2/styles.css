@@ -1,0 +1,22 @@
+@import '../../../../typo3/stylesheet.css';
+
+body#typo3-mod-php {overflow:auto;}
+div.typo3-noDoc {margin:0;}
+
+table {border:0;width:100%;}
+table td {text-align:left;vertical-align:top;height:1.8em;line-height:1.6em;}
+table td input:hover,
+table td input {border:0;background-color:transparent;margin-bottom:-4px;}
+table td img {margin-bottom:-0.4em;}
+table th {width:100%;color:#fff;background:#B8BEC9 url(../icons/gfx/alt_menu_mainitem_bg.gif) repeat-x;}
+table .day td {border-bottom:1px dotted #555;}
+table .day .col1 {width:50px;padding:0 0 0 5px;border-right:1px dotted #555;}
+table .day .old {opacity:0.5;}
+table .day .today {background-color:#afffaf;}
+table .hall td {border:0;}
+table .hall tr.odd  {background-color:#dfdff4;}
+table .hall tr.even {background-color:#efeff4;}
+table .hall .col1 {width:100px;border-right:0;}
+table .time .col1 {width:40px;}
+table .time .col2 {width:65px;}
+table .film .col1 {width:50px;}

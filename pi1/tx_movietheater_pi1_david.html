@@ -1,0 +1,112 @@
+###FILM_TITLE### - Local name of the film
+###FILM_ORIGINAL_TITLE### - Original name of the film
+###FILM_SPECIAL### - Special of the film (e.g. 'bizarre cinema')
+###FILM_SPECIAL_IMAGE### - Image for the special
+###FILM_VERSION### - Version of the film (e.g. 'subtitles')
+###FILM_VERSION_SHORT### - Version (short form, e.g. 'eng.subs')
+###FILM_COUNTRY### - Country where the film was made
+###FILM_YEAR### - Year the film was made
+###FILM_CREDITS### - Credits of the film
+###FILM_TEASER### - Teaser text for the film
+###FILM_SHOWS### - Dates when the film is running
+###FILM_DESCRIPTION### - Description of the film
+###FILM_IMAGE### - Image of the film
+###FILM_IMDB### - imdb entry for the film
+
+
+
+<h3>TEMPLATE</h3>
+<em>For movietheater Extension</em>
+<!-- ###TEMPLATE_LIST_MONTH### begin -->
+<div id="monatsprogramm">
+	<h2>Monatsprogramm ###MONTH### ###YEAR###</h2>
+	<ul class="filmliste">
+		<!-- ###CONTENT### -->
+    		<!-- ###ITEM### -->
+		<li class="box">
+			<div class="filmbilder">###FILM_IMAGE###</div>
+			<div class="filmtext">
+				<h3>###FILM_TITLE###</h3>
+				<div class="special-image">###FILM_SPECIAL###</div>
+				<p>###FILM_VERSION_SHORT### ###FILM_COUNTRY### ###FILM_YEAR###<br />
+				###FILM_CREDITS###<br />
+				###FILM_TEASER###</p>
+				<p><strong>###FILM_SHOWS_DATE### ###FILM_SHOWS_TIME###</strong></p>
+			</div>
+			<div class="clear"></div>
+		</li>
+		<!-- ###ITEM### -->
+   		<!-- ###CONTENT### -->
+	</ul>
+</div>
+<!-- ###TEMPLATE_LIST_MONTH### end -->
+
+<!-- ###TEMPLATE_LIST_WEEK### begin -->
+<div id="wochenprogramm">
+	<h2>Wochenprogramm vom ###WEEK_START### - ###WEEK_END###</h2>
+	<ul class="filmliste">
+		<!-- ###CONTENT### -->
+    		<!-- ###ITEM### -->
+		<li class="box">
+			<div class="filmbilder">###FILM_IMAGE###</div>
+			<div class="filmtext">
+				<h3>###FILM_TITLE###</h3>
+				<div class="special-image">###FILM_SPECIAL###</div>
+				<p>###FILM_VERSION_SHORT### ###FILM_COUNTRY### ###FILM_YEAR###<br />
+				###FILM_CREDITS###<br />
+				###FILM_TEASER###</p>
+				<p><strong>###FILM_SHOWS_DATE### ###FILM_SHOWS_TIME###</strong></p>
+			</div>
+			<div class="clear"></div>
+		</li>
+		<!-- ###ITEM### -->
+   		<!-- ###CONTENT### -->
+	</ul>
+</div>
+<!-- ###TEMPLATE_LIST_WEEK### end -->
+
+<!-- ###TEMPLATE_LIST_DAY### begin -->
+<div id="tagesprogramm">
+	<h2>Tagesprogramm für ###DAY###</h2>
+	<ul class="filmliste">
+		<!-- ###CONTENT### -->
+    		<!-- ###ITEM### -->
+		<li class="box">
+			<div class="filmbilder">###FILM_IMAGE###</div>
+			<div class="filmtext">
+				<h3>###FILM_TITLE###</h3>
+				<div class="special-image">###FILM_SPECIAL###</div>
+				<p>###FILM_VERSION_SHORT### ###FILM_COUNTRY### ###FILM_YEAR###<br />
+				###FILM_CREDITS###<br />
+				###FILM_TEASER###</p>
+				<p><strong>###FILM_SHOWS_DATE### ###FILM_SHOWS_TIME###</strong></p>
+			</div>
+			<div class="clear"></div> 
+		</li>
+		<!-- ###ITEM### -->
+   		<!-- ###CONTENT### -->
+	</ul>
+</div>
+<!-- ###TEMPLATE_LIST_DAY### end -->
+
+<!-- ###TEMPLATE_SINGLE_VIEW### begin -->
+  <div id="einzelansicht">
+   <!-- ###CONTENT### -->
+    <!-- ###ITEM### -->
+		<div class="filmbilder">
+			###FILM_SPECIAL_IMAGE###
+			###FILM_IMAGE###
+		</div>
+		<div class="filmtext">
+			<h4>###FILM_TITLE###</h4>
+			<p>Originaltitel: ###FILM_ORIGINAL_TITLE###</p>
+			<p>###FILM_VERSION### ###FILM_COUNTRY### ###FILM_YEAR###</p>
+			<p>###FILM_CREDITS###</p>
+			###FILM_DESCRIPTION###
+			<p><strong>###FILM_SHOWS_DATE### ###FILM_SHOWS_TIME###</strong></p>
+		</div>
+		<hr />
+    <!-- ###ITEM### -->
+   <!-- ###CONTENT### -->
+  </div>
+ <!-- ###TEMPLATE_SINGLE_VIEW### end -->

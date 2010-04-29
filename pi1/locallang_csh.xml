@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+  <meta type="array">
+    <description>CSH labels for FlexForm fields</description>
+    <type>CSH</type>
+    <csh_table></csh_table>
+    <fileId>EXT:movietheater/pi1/locallang_csh.xml</fileId>
+    <labelContext type="array"></labelContext>
+  </meta>
+  <data type="array">
+    <languageKey index="default" type="array">
+      <label index="mode.alttitle">alternative title</label>
+      <label index="mode.description">description</label>
+      <label index="mode.details">details</label>
+      <label index="mode.syntax">syntax</label>
+      <label index="mode.image_descr">image caption</label>
+      <label index="mode.image">gfx/i/pages.gif</label>
+      <label index="mode.seeAlso">pages:starttime</label>
+    </languageKey>
+  </data>
+</T3locallang>

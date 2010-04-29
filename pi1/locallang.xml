@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for plugin &quot;tx_movietheater_pi1&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="field_title">Title</label>
+			<label index="field_originaltitle">Original Title</label>
+			<label index="field_special">Special</label>
+			<label index="field_credits">Credits</label>
+			<label index="field_teaser">Teaser</label>
+			<label index="field_description">Description</label>
+			<label index="field_images">Images</label>
+			<label index="field_imdb">IMDB</label>
+			<label index="field_year">Year</label>
+			<label index="field_version">Version</label>
+			<label index="field_country">Country</label>
+      <label index="tt_content.pi_flexform.tab1">Settings</label>
+      <label index="tt_content.pi_flexform.mode">Mode:</label>
+      <label index="tt_content.pi_flexform.mode.automatic">Automatic</label>
+      <label index="tt_content.pi_flexform.mode.singleview">Singleview</label>
+      <label index="tt_content.pi_flexform.mode.dayview">Day</label>
+      <label index="tt_content.pi_flexform.mode.weekview">Week</label>
+      <label index="tt_content.pi_flexform.mode.monthview">Month</label>
+      <label index="tt_content.pi_flexform.folder">Folder:</label>
+      <label index="tt_content.pi_flexform.view">View:</label>
+      <label index="tt_content.pi_flexform.view.film">Film</label>
+      <label index="tt_content.pi_flexform.view.show">Show</label>
+      <label index="tt_content.pi_flexform.view.day">Day</label>
+      <label index="tt_content.pi_flexform.view.week">Week</label>
+      <label index="tt_content.pi_flexform.view.month">Month</label>
+      <label index="tt_content.pi_flexform.film">Film:</label>
+      <label index="prev">&lt;&lt;&lt;</label>
+      <label index="next">&gt;&gt;&gt;</label>
+      <label index="dayview.headline">Tagesprogramm für</label>
+		</languageKey>
+	</data>
+</T3locallang>

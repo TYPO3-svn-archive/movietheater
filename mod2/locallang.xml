@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for module &quot;user_txmovietheaterM1&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="mlang_tabs_tab">Shows</label>
+			<label index="mlang_labels_tabdescr">Manage your shows</label>
+			<label index="mlang_labels_tablabel">Shows manager</label>
+			<label index="CTRL.EDIT">Edit</label>
+			<label index="CTRL.SHOW">Show</label>
+			<label index="CTRL.HIDE">Hide</label>
+			<label index="CTRL.DELETE">Delete</label>
+			<label index="CTRL.CHECK">Are you sure?</label>
+			<label index="CTRL.NEW">New</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="mlang_tabs_tab">Vorstellungen</label>
+			<label index="mlang_labels_tabdescr">Verwalten Sie Ihre Vorstellungen</label>
+			<label index="mlang_labels_tablabel">Vorstellungs-Verwaltung</label>
+			<label index="CTRL.EDIT">Bearbeiten</label>
+			<label index="CTRL.SHOW">Anzeigen</label>
+			<label index="CTRL.HIDE">Verstecken</label>
+			<label index="CTRL.DELETE">Löschen</label>
+			<label index="CTRL.CHECK">Sind sie sicher?</label>
+			<label index="CTRL.NEW">Neuen Datensatz erstellen</label>
+    </languageKey>
+	</data>
+</T3locallang>

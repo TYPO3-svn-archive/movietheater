@@ -1,0 +1,12 @@
+.tx-movietheater-pi1 {}
+
+.tx-movietheater-pi1 .clear {clear:both;}
+
+.tx-movietheater-pi1 #einzelansicht {}
+.tx-movietheater-pi1 #einzelansicht .film {}
+.tx-movietheater-pi1 #einzelansicht .film .filmbilder {float:left;width:215px;}
+.tx-movietheater-pi1 #einzelansicht .film .filmtext {margin:0 0 0 215px;}
+
+.tx-movietheater-pi1 #tagesprogramm {}
+.tx-movietheater-pi1 #tagesprogramm h2.prev {float:left;}
+.tx-movietheater-pi1 #tagesprogramm h2.next {float:right;}

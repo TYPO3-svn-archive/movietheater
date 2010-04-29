@@ -1,0 +1,12 @@
+plugin.tx_movietheater_pi1 {
+
+  # cat=plugin.movietheater/file[html]/a; type=file[html,htm,tmpl]; label=TEMPLATES: path to HTML-Template
+  template = EXT:movietheater/pi1/tx_movietheater_pi1.html
+  
+  # cat=plugin.movietheater/file[css]/b;  type=file[css];           label=TEMPLATES: path to CSS-File
+  css = EXT:movietheater/pi1/tx_movietheater_pi1.css
+  
+  # cat=plugin.movietheater/file[xml]/c;  type=file[xml];           label=TEMPLATES: path to labels definition.
+  locallang = EXT:movietheater/pi1/locallang.xml
+  
+}

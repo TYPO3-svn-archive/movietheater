@@ -1,0 +1,2 @@
+# cat=basic/other; type=int; label=Movie storage folder: enter UID here. 
+store = 0
