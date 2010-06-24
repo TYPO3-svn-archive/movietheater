@@ -23,7 +23,9 @@
 ***************************************************************/
 require_once(t3lib_extMgm::extPath('movietheater').'mmlib/class.mmlib_pibase.php');
 require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_film.php");
-
+require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_day.php");
+require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_week.php");
+require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_month.php");
 
 /**
  * Plugin 'Movies' for the 'movietheater' extension.
@@ -46,74 +48,69 @@ class tx_movietheater_pi1 extends mmlib_pibase {
 	 * @return	The content that is displayed on the website
 	 */
 	function main($content,$conf){try{
-	
-		$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
 		
-		parent::main($content,$conf);
+		parent::main($content,$conf,1);
 		
-		$this->cObj->start(array_merge(
-			array_flaten($this->flexform,'ff'),
-			array_flaten($this->piVars,'pivar'),
-			array_flaten($extConf,'ext'),
-			array(
-				'now'						=> time(),
-				'midnight'			=> strtotime('today 00:00:00'),
-				'thursday'			=> strtotime((date('N')==4?'today':'last thursday').' 00:00:00'),
-				'monday'				=> strtotime((date('N')==1?'today':'last monday').' 00:00:00'),
-			)
-		));
+		$this->setRegisters(unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]));
 		
-		//print('<pre>');var_dump($this->cObj->data);die('</pre>');/*DEBUG*/
-
-    return $this->pi_wrapInBaseClass($this->cObj->COBJ_ARRAY($conf));
-		
-	}catch (Exception $e){
-		return $e->getMessage();
-	}}
-	
-	/**
-	 * Create a pagebrowser.
-	 *
-	 * @param	string		$content: The PlugIn content
-	 * @param	array		$conf: The PlugIn configuration
-	 * @return	The content that is displayed on the website
-	 */
-	function browser($content,$conf){try{
-		$from = strtotime((date('N')==4?'today':'last thursday').' 00:00:00');
-		$to = $from + ( 7 * 24 * 60 * 60 );
-		for( $i = $from ; $i <= $to ; $i += ( 24 * 60 * 60 ) )$days[] = $i;
-		$cObj = new tslib_cObj();
-		$cObj->start(array(
-			'days' => implode(',',$days)
-		));
-		return $cObj->cObjGetSingle($conf['renderObj'],$conf['renderObj.']);
-	}catch (Exception $e){
-		return $e->getMessage();
-	}}
-
-}
-
-function array_flaten($data,$prefix=''){
-	foreach($data as $k => $v){
-		$k = strtr($k,array('.'=>''));// strip dots
-		if(is_array($v)){
-			$tmp = array_merge($tmp?$tmp:array(),array_flaten($v,$prefix.'.'.$k));
-		}else{
-			$tmp[$prefix.'.'.$k] = $v;
+		switch($this->mode){
+			case 'singleview':	return $this->singleview();
+			case 'dayview': 		return $this->dayview();
+			case 'weekview': 		return $this->weekview();
+			case 'monthview':		return $this->monthview();
+			default: throw new Exception(sprintf('invalid mode "%s"',$this->mode));
 		}
+		
+	}catch (Exception $e){
+		return sprintf("<pre>%s</pre>%s",$e,$GLOBALS['TYPO3_DB']->debug_lastBuiltQuery);
+	}}
+	
+	private function singleview(){
+		$uid = intval($this->piVars['film']);
+		if($this->film) $uid = $this->film;// prefer typoscript & flexform
+		if(!$uid) return "";
+		$film = new tx_movietheater_film(tx_movietheater_film::query($uid));
+		$this->cObj->start($film->data);
+		$content  = $this->pi_wrapInBaseClass($this->cObj->cObjGetSingle($this->conf['singleview'],$this->conf['singleview.']));
+		//$content .= "<hr />\n".t3lib_div::view_array($this->cObj->data);//DEBUG
+		//$content .= "<hr />\n".t3lib_div::view_array($this->conf);//DEBUG
+		//$content .= "<hr />\n".t3lib_div::view_array($this->piVars);//DEBUG
+		return $content;
 	}
-	return is_array($tmp)?$tmp:array();
-}
-
-function print_ts($ts,$prefix=''){
-	foreach($ts as $key => $value)if(is_array($value)){
-		print_ts($value,$prefix.$key);
-	}else{
-		print($prefix.$key." = ".$value."\n");
+	
+	private function dayview(){
+		$timestamp = intval($this->piVars['day']);
+		if($this->day) $timestamp = $this->day;// prefer typoscript & flexform
+		if(!$timestamp) $timestamp = time();// default to now
+		$day = new tx_movietheater_day($timestamp);
+		$this->cObj->start($day->fields);
+		$content  = $this->pi_wrapInBaseClass($this->cObj->cObjGetSingle($this->conf['dayview'],$this->conf['dayview.']));
+		//$content .= "<hr />\nDATA:".t3lib_div::view_array($this->cObj->data);//DEBUG
+		//$content .= "<hr />\n".$this->conf['dayview'].":".t3lib_div::view_array($this->conf['dayview.']);//DEBUG
+		//$content .= "<hr />\nPIVARS:".t3lib_div::view_array($this->piVars);//DEBUG
+		return $content;
 	}
-}
-function print_marks($data){
-	foreach(array_keys($data) as $num => $key)print(sprintf("%s = TEXT\n%s.field = %s\n",strtoupper($key),strtoupper($key),$key));
+	
+	private function weekview(){
+		$timestamp = intval($this->piVars['week']);
+		if($this->week) $timestamp = $this->week;// prefer typoscript & flexform
+		if(!$timestamp) $timestamp = time();// default to now
+		$week = new tx_movietheater_week($timestamp);
+		$this->cObj->start($week->fields);
+		$content  = $this->pi_wrapInBaseClass($this->cObj->cObjGetSingle($this->conf['weekview'],$this->conf['weekview.']));
+		return $content;
+	}
+	
+	private function monthview(){
+		$timestamp = intval($this->piVars['month']);
+		if($this->month) $timestamp = $this->month;// prefer typoscript & flexform
+		if(!$timestamp) $timestamp = time();// default to now
+		$month = new tx_movietheater_month($timestamp);
+		$this->cObj->start($month->fields);
+		$content  = $this->pi_wrapInBaseClass($this->cObj->cObjGetSingle($this->conf['monthview'],$this->conf['monthview.']));
+		return $content;
+	}
+	
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/movietheater/pi1/class.tx_movietheater_pi1.php'])	{

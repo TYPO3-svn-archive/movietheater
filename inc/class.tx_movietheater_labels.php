@@ -20,7 +20,7 @@ class tx_movietheater_labels{
   
   function getLabelShow(&$params, &$pObj){try{
     if(intval($params['row']['uid'])){
-      $show = new tx_movietheater_show(intval($params['row']['uid']));
+      $show = new tx_movietheater_show(tx_movietheater_show::query(intval($params['row']['uid'])));
       $params['title'] = $show->getBELabel();
     }
   }catch (Exception $e){

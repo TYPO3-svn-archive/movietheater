@@ -21,6 +21,17 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_day.php");
+require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_week.php");
+
+/* ISO-8601 */
+define('MON',1);
+define('TUE',2);
+define('WED',3);
+define('THU',4);
+define('FRI',5);
+define('SAT',6);
+define('SUN',7);
 
 /**
  * @author	Markus Martens <m.martens@digitage.de>
@@ -30,8 +41,9 @@
 class  view_list{
 
   public $doc = null;
+  public $clipboard = null;
   private $halls = null;
-  private $store = 0;
+  private $extConf = null;
   private $row = 0;
   
 	/**
@@ -43,42 +55,70 @@ class  view_list{
 		global $BE_USER,$LANG,$BACK_PATH,$TCA_DESCR,$TCA,$CLIENT,$TYPO3_CONF_VARS;
 		//SNIP: $LANG->getLL('title')
 		//SNIP: t3lib_div::view_array($_POST)
-		$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['movietheater']);
-    $this->store = intval($extConf['store']);// set storage folder
-		$this->halls = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_halls','deleted = 0 AND hidden = 0 AND pid = '.$this->store,'','','','uid');
-		$shows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_shows','deleted = 0 AND pid = '.$this->store,'','date ASC','','uid');
+		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['movietheater']);
+    print("\n<!--\nextConf = ");var_dump($this->extConf);print("-->\n");//DEBUG
+    
+    if(!empty($_POST['CLEAR'])){// remove old shows
+      $where = sprintf('( date BETWEEN %d AND %d ) AND ( pid = %d )',$_POST['CLEAR'],$_POST['CLEAR']+(60*60*24*7),$this->extConf['storage']);
+      $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_movietheater_shows',$where,array( 'deleted' => 1 ));
+    }
+    
+		$this->halls = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_halls','deleted = 0 AND hidden = 0 AND pid = '.$this->extConf['storage'],'','','','uid');
+		$shows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_shows','deleted = 0 AND pid = '.$this->extConf['storage'],'','date ASC','','uid');
+    
     $start = reset($shows);
-    $start = $start['date']?$start['date']:time();
-    $days = ceil((time()-$start)/60/60/24);
+    $start = $start['date'];
+    if(!$start)$start = time();// if no shows start today
+    $start = tx_movietheater_week::beginning(min(strtotime('00:00:00',$start),time()));
+    $stop  = tx_movietheater_week::beginning(time()) + (($this->extConf['preview']+1)*60*60*24*7);
+    //$days = ceil((time()-$start)/60/60/24);
     
     // create base show-array from first show until now + 14 days
-    for( $i = $start ; $i < strtotime("+2 week") ; $i += (60*60*24) ) $tmp[date('y:W',$i)][strtotime('00:00:00',$i)] = array('');
+    for( $i = $start ; $i < $stop ; $i += (60*60*24) ){
+      $tmp[view_list::kinowoche($i)][strtotime('00:00:00',$i)] = array();
+    }
+    
     // fill in actual shows
 		foreach($shows as $num => $item){
-			$tmp[date('y:W',$item['date'])][strtotime('00:00:00',$item['date'])][$item['hall']][date('H:i',$item['date'])] = $item;//PHP 5.1.0
-		}
+      $kw = view_list::kinowoche($item['date']);
+      $tag = tx_movietheater_day::beginning($item['date']);
+			$tmp[$kw][$tag][$item['hall']][date('H:i',$item['date'])] = $item;//PHP 5.1.0
+		}/**/
     
     //print(t3lib_div::view_array($tmp));die();
-		return $this->viewKW($tmp);
+		return $toolbar.$this->viewKW($tmp);
 	}
 	
+  /* gibt für einen zeitstempel die kinowoche im format [JJJJ:WW] zurück */
+  public static function kinowoche($timestamp,$day=THU){
+    return date('Y:W',tx_movietheater_week::beginning($timestamp,$day));
+  }
+  
   private function viewKW($data){
     foreach($data as $key => $val){
       list($year,$kw) = explode(':',$key);
       $sub = $this->viewDAY($val);
-      $tmp .= sprintf("<tr><th class='col1'>KW%02d 20%02d</th></tr>\n<tr><td>%s</td></tr>",$kw,$year,$sub);
+      $tmp .= "<tr><th class='col1'>";
+      $tmp .= "<a onclick=\"previewWin=window.open(top.WorkspaceFrontendPreviewEnabled?'../index.php?id=".$this->extConf['weekview']."&tx_movietheater_pi1[week]=".$key."&no_cache=1':'../typo3/mod/user/ws/wsol_preview.php?id=22','newTYPO3frontendWindow');previewWin.focus();\" href=\"#\">Kino Woche ".$kw." - ".$year."</a>";
+      $tmp .= "<input type='image' src='sysext/t3skin/icons/gfx/garbage.gif' name='CLEAR' value='".tx_movietheater_week::beginning(key($val))."' title='KW ".$kw." löschen' />";
+      $tmp .= "</th></tr>\n";
+      $tmp .= "<tr><td>".$sub."</td></tr>\n";
     }
-    return sprintf("<table class='kw' cellpadding='0' cellspacing='0' border='0'>%s</table>",$tmp);
+    return "<table class='kw' cellpadding='0' cellspacing='0' border='0'>".$tmp."</table>\n";
   }
   
   private function viewDAY($data){
+    global $LANG;
     $days = array('XX','MO','DI','MI','DO','FR','SA','SO');
     foreach($data as $key => $val){
       $sub = $this->viewHALL($val,$key);
       if( $key < strtotime('00:00:00') ) $css = ' old';
       elseif( $key == strtotime('00:00:00') ) $css = ' today';
       else $css = ' future';
-      $tmp .= sprintf("<tr><td class='col1".$css."'>%s</td><td class='col2".$css."'>%s</td></tr>",date('D d.m.',$key),$sub);
+      $label = date('D d.m.',$key);
+      $params = '&tx_movietheater_pi1[day]='.$key.'&no_cache=1';
+      $label = '<a href="#" title='.$LANG->getLL('CTRL.VIEW').' onclick="'.htmlspecialchars(t3lib_BEfunc::viewOnClick($this->extConf['dayview'],$GLOBALS['BACK_PATH'],'','','',$params)).'">'.$label.'</a>';
+      $tmp .= sprintf("<tr><td class='col1".$css."'>%s</td><td class='col2'>%s</td></tr>",$label,$sub);
     }
     return sprintf("<table class='day' cellpadding='0' cellspacing='0' border='0'>%s</table>",$tmp);
   }
@@ -87,9 +127,10 @@ class  view_list{
     global $LANG;
     foreach($this->halls as $key => $val){
       $sub = $data[$key]?$this->viewTIME($data[$key]):'-';
-      //$ctrl = "<input type='image' name='action' value='N:".$date."-".$key."' src='sysext/t3skin/icons/gfx/new_page.gif'/>";
-      $params = "&edit[tx_movietheater_shows][".$this->store."]=new&preset[date]=".strtotime('12:00:00',$date)."&preset[hall]=".$key;
-      $ctrl = $this->button($this->alt_doc($params),'new_page',$LANG->getLL('CTRL.NEW'));
+      $params = "&edit[tx_movietheater_shows][".$this->extConf['storage']."]=new&preset[date]=".strtotime('12:00:00',$date)."&preset[hall]=".$key;
+      $ctrl  = '';
+      //$ctrl .= '<a href="#" onclick="return false;">'.$this->icon('clip_pasteinto','Einfügen am '.date('d.m.Y',$date).' in '.$val['name']).'</a>';
+      $ctrl .= $this->button($this->alt_doc($params),'new_page',$LANG->getLL('CTRL.NEW'));
       $tmp .= sprintf("<tr class='%s'><td class='col1'>%s%s</td><td>%s</td></tr>",(($this->row%2)?'odd':'even'),$val['name'],$ctrl,$sub);
       $this->row++;
     }
@@ -106,24 +147,30 @@ class  view_list{
   }
   
   private function viewFILM($data){
+    global $LANG;
 		$film = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_films','uid='.$data['film']));
-    //return sprintf("[%05d]%s&nbsp;[%05d]&nbsp;%s",$data['uid'],$ctrl,$film['uid'],$film['title']);/*DEBUG*/
-    return sprintf("%s&nbsp;&nbsp;%s",$ctrl,$film['title']);
+    $label = $film['title'];
+    $params = '&tx_movietheater_pi1[film]='.$film['uid'].'&no_cache=1';
+    $label = '<a href="#" title='.$LANG->getLL('CTRL.VIEW').' onclick="'.htmlspecialchars(t3lib_BEfunc::viewOnClick($this->extConf['singleview'],$GLOBALS['BACK_PATH'],'','','',$params)).'">'.$label.'</a>';
+    return $label;
   }
 
   private function getCTRL($data){
     $ctrl = $this->getLinks('tx_movietheater_shows',$data);
-    $ctrl = array_intersect_key($ctrl,array_flip(array('edit','hidden','delete')));
     return "<div class=\"typo3-DBctrl\">\n".implode("\n",$ctrl)."</div>\n";
   }
   
   private function getLinks($table,$row){
 		global $LANG;
-    $cells['info']='<a href="#" onclick="top.launchView(\''.$table.'\',\''.$row['uid'].'\',\''.$GLOBALS['BACK_PATH'].'\'); return false;">'.$this->icon('zoom2','Informationen anzeigen').'</a>';
-    // Edit:
+    
+    // INFO
+    //$cells['info']='<a href="#" onclick="top.launchView(\''.$table.'\',\''.$row['uid'].'\',\''.$GLOBALS['BACK_PATH'].'\'); return false;">'.$this->icon('zoom2','Informationen anzeigen').'</a>';
+    
+    // EDIT:
     $params='&edit['.$table.']['.$row['uid'].']=edit';
     $cells['edit']='<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($params,$GLOBALS['BACK_PATH'],t3lib_div::getIndpEnv('REQUEST_URI'))).'">'.$this->icon('edit2',$LANG->getLL('CTRL.EDIT')).'</a>';
-    // Hide:
+    
+    // HIDE:
     if ($row['hidden'])	{
       $params='&amp;data['.$table.']['.$row['uid'].'][hidden]=0';
       $cells['hidden']=$this->button($this->jumpToUrl($params),'button_unhide',$LANG->getLL('CTRL.SHOW'));
@@ -131,9 +178,23 @@ class  view_list{
       $params='&amp;data['.$table.']['.$row['uid'].'][hidden]=1';
       $cells['hidden']=$this->button($this->jumpToUrl($params),'button_hide',$LANG->getLL('CTRL.HIDE'));
     }
-    // Delete
+    
+    // CUT
+    $params='&amp;CB[el]['.$table.'%7C'.$row['uid'].']=1';
+    $cells['cut']=$this->button($this->jumpToUrl($params),'clip_cut',$LANG->getLL('CTRL.CUT'));
+    
+    // COPY
+    $params='&amp;cmd['.$table.']['.$row['uid'].'][setCB]=1&amp;CB[el]['.$table.'%7C'.$row['uid'].']=1&amp;CB[setCopyMode]=1';
+    $cells['copy']=$this->button($this->jumpToUrl($params),'clip_copy',$LANG->getLL('CTRL.COPY'));
+    
+    // DELETE
     $params='&amp;cmd['.$table.']['.$row['uid'].'][delete]=1';
     $cells['delete']=$this->button($this->jumpToUrl($params,$LANG->getLL('CTRL.CHECK')),'garbage',$LANG->getLL('CTRL.DELETE'));
+    
+    // VIEW
+    //$params = '&tx_movietheater_pi1[film]='.$row['film'].'&no_cache=1';
+    //$cells['view']='<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::viewOnClick($this->extConf['singleview'],$GLOBALS['BACK_PATH'],'','','',$params)).'">'.$this->icon('zoom',$LANG->getLL('CTRL.VIEW')).'</a>';
+    
     // return  
     return $cells;
   }

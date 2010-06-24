@@ -34,18 +34,24 @@ require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_ha
 class tx_movietheater_show{
   private $data = null;
 	
-	function tx_movietheater_show($uid)	{
-		$this->data = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_shows',sprintf('uid = %d',$uid)));// query db
+	function tx_movietheater_show(array $data)	{
+		$this->data = $data;
 		if(empty($this->data))throw new Exception('couldn\'t find show');// check result
-		$this->data['film'] = new tx_movietheater_film(intval($this->film));// get film
-		$this->data['hall'] = new tx_movietheater_hall(intval($this->hall));// get hall
+		$this->data['film'] = new tx_movietheater_film(tx_movietheater_film::query(intval($this->film)));// get film
+		$this->data['hall'] = new tx_movietheater_hall(tx_movietheater_hall::query(intval($this->hall)));// get hall
 		//print('<pre>');var_dump($this);die('</pre>');/*DEBUG*/
 	}
   
-	function __get($name){return $this->data[$name];}
-	
+	function __get($name){switch($name){
+		default: return $this->data[$name];
+	}}
+
 	function getBELabel(){
 		return sprintf('%s "%s"',date('d.m.y H:i',$this->date),$this->film->title);
+	}
+	
+	public static function query($uid){
+		return array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_shows',sprintf('uid = %d',$uid)));
 	}
 	
 }

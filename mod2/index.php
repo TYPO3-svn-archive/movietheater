@@ -41,6 +41,7 @@ class  tx_movietheater_module2 extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function printContent()	{
+  
     $this->doc = t3lib_div::makeInstance('noDoc');
     $this->doc->backPath = $BACK_PATH;
     $this->doc->form='<form action="" method="post" enctype="multipart/form-data">';
@@ -56,12 +57,21 @@ class  tx_movietheater_module2 extends t3lib_SCbase {
       script_ended = 1;
       if (top.fsMod) top.fsMod.recentIds["web"] = 0;
     </script>';
+    
+    $clipboard = t3lib_div::makeInstance('t3lib_clipboard');
+    $clipboard->initializeClipboard();
+    
     $view = t3lib_div::makeInstance('view_list');
     $view->doc = $this->doc;
-    //print(t3lib_div::view_array($_POST));/*DEBUG*/
+    $view->clipboard = $clipboard;
+    
     print($this->doc->startPage(get_class(this)));
+    print($clipboard->printClipboard());
     print($view->display());
     print($this->doc->endPage());
+    
+    $clipboard->endClipboard();
+    
 	}
   
 }

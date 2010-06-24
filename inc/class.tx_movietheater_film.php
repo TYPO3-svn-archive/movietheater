@@ -32,38 +32,20 @@ require_once(t3lib_extMgm::extPath("movietheater")."inc/class.tx_movietheater_ve
  * @subpackage	tx_movietheater
  */
 class tx_movietheater_film{
-  private $data = null;
+
+  public $data = null;
   
-	/**
-	 * Constructor
-	 */
-	function tx_movietheater_film($uid,$pid=0){
-		$where = sprintf('uid = %d',$uid);
-		if($pid)$where .= sprintf(' AND pid = %d',$pid);
-		$this->data = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_films',$where));// query db
-		if(empty($this->data))throw new Exception('couldn\'t find film');// check result
-		if($this->special) $this->data['special'] = new tx_movietheater_special(intval($this->special));// get special
-		if($this->version) $this->data['version'] = new tx_movietheater_version(intval($this->version));// get version
-		//print('<pre>');print_r($this);die('</pre>');/*DEBUG*/
+	public function tx_movietheater_film(array $data){
+		$this->data = $data;
+		if(empty($this->data))throw new Exception('invalid film');// check result
 	}
   
-	/**
-	 * General data access
-	 */
-	function __get($name){switch($name){case 'marker': return $this->marker(); default: return $this->data[$name];}}
+	public function __get($name){switch($name){
+		default: return $this->data[$name];
+	}}
 
-	/**
-	 * Return markers and subparts for this film
-	 */
-	public function marker($prefix=''){
-		$result = array();
-		foreach( $this->data as $key => $val )if(!is_object($val))$result['###'.$prefix.strtoupper($key).'###'] = $val;// get normal markers
-		$result = array_merge($result,$this->data['special']->marker('SPECIAL.'));// get markers for special
-		$result['###IMAGES###'] = array();
-		foreach( explode(',',$this->data['images']) as $num => $image ){
-			$result['###IMAGES###'][$num] = array( '###IMAGE###' => 'uploads/tx_movietheater/'.$image );
-		}
-		return $result;
+	public static function query($uid){
+		return array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_films',sprintf('uid = %d',$uid)));// query db
 	}
 	
 }

@@ -45,7 +45,9 @@ class mmlib_pibase extends tslib_pibase {
     // merge ts-config with ff-config
     foreach($this->cObj->data['pi_flexform']['data'] as $sheetID => $sheet)
       foreach( $sheet['lDEF'] as $key => $value )
-        $this->conf['flexform'][strtolower($sheetID.'.')][$key] = strval($value['vDEF']);
+        if(strval($value['vDEF']))
+          //$this->conf['flexform'][strtolower($sheetID.'.')][$key] = strval($value['vDEF']);
+          $this->conf[$key] = strval($value['vDEF']);
     // load possible css
     if($this->css)$this->setCSS($this->css);
   }

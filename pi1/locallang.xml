@@ -35,6 +35,10 @@
       <label index="prev">&lt;&lt;&lt;</label>
       <label index="next">&gt;&gt;&gt;</label>
       <label index="dayview.headline">Tagesprogramm für</label>
+      <label index="weekview.headline">Wochenprogramm vom</label>
+      <label index="weekview.to">bis</label>
+      <label index="monthview.headline">Monatsprogramm vom</label>
+      <label index="monthview.to">bis</label>
 		</languageKey>
 	</data>
 </T3locallang>

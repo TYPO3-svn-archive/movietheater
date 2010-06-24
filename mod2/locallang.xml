@@ -15,6 +15,9 @@
 			<label index="CTRL.DELETE">Delete</label>
 			<label index="CTRL.CHECK">Are you sure?</label>
 			<label index="CTRL.NEW">New</label>
+			<label index="CTRL.CUT">Cut</label>
+			<label index="CTRL.COPY">Copy</label>
+			<label index="CTRL.VIEW">View</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="mlang_tabs_tab">Vorstellungen</label>
@@ -26,6 +29,9 @@
 			<label index="CTRL.DELETE">Löschen</label>
 			<label index="CTRL.CHECK">Sind sie sicher?</label>
 			<label index="CTRL.NEW">Neuen Datensatz erstellen</label>
+			<label index="CTRL.CUT">Ausschneiden</label>
+			<label index="CTRL.COPY">Kopieren</label>
+			<label index="CTRL.VIEW">Anzeigen</label>
     </languageKey>
 	</data>
 </T3locallang>

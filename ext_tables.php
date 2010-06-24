@@ -13,7 +13,7 @@ $TCA["tx_movietheater_films"] = array (
 			'disabled' => 'hidden',
 		),
 		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY).'tca.php',
-		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_movietheater_films.gif',
+		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'res/gfx/icon_tx_movietheater_films.gif',
 	),
 	"feInterface" => array (
 		"fe_admin_fieldList" => "hidden, title, originaltitle, special, credits, teaser, description, images, imdb, year, version, country",
@@ -33,7 +33,7 @@ $TCA["tx_movietheater_specials"] = array (
 			'disabled' => 'hidden',
 		),
 		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY).'tca.php',
-		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_movietheater_specials.gif',
+		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'res/gfx/icon_tx_movietheater_specials.gif',
 	),
 	"feInterface" => array (
 		"fe_admin_fieldList" => "hidden, title, image",
@@ -53,7 +53,7 @@ $TCA["tx_movietheater_versions"] = array (
 			'disabled' => 'hidden',
 		),
 		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY).'tca.php',
-		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_movietheater_versions.gif',
+		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'res/gfx/icon_tx_movietheater_versions.gif',
 	),
 	"feInterface" => array (
 		"fe_admin_fieldList" => "hidden, name, shortform",
@@ -73,7 +73,7 @@ $TCA["tx_movietheater_shows"] = array (
 			'disabled' => 'hidden',
 		),
 		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY).'tca.php',
-		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_movietheater_shows.gif',
+		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'res/gfx/icon_tx_movietheater_shows.gif',
 	),
 	"feInterface" => array (
 		"fe_admin_fieldList" => "hidden, hall, film, date",
@@ -93,7 +93,7 @@ $TCA["tx_movietheater_halls"] = array (
 			'disabled' => 'hidden',
 		),
 		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY).'tca.php',
-		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_movietheater_halls.gif',
+		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'res/gfx/icon_tx_movietheater_halls.gif',
 	),
 	"feInterface" => array (
 		"fe_admin_fieldList" => "hidden, name, seats",

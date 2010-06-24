@@ -1,2 +1,17 @@
 # cat=basic/other; type=int; label=Movie storage folder: enter UID here. 
-store = 0
+storage = 0
+
+# cat=basic/other; type=int; label=Preview weeks: enter amount of future weeks to display. 
+preview = 3
+
+# cat=basic/other; type=int; label=Single-View page: enter uid of page to display a single film.
+singleview = 0
+
+# cat=basic/other; type=int; label=Day-View page: enter uid of page to display films for a specific day.
+dayview = 0
+
+# cat=basic/other; type=int; label=Week-View page: enter uid of page to display films for a specific week.
+weekview = 0
+
+# cat=basic/other; type=int; label=Month-View page: enter uid of page to display films for a specific month.
+monthview = 0

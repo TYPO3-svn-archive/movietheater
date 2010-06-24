@@ -32,13 +32,19 @@
 class tx_movietheater_hall{
   private $data = null;
   
-	function tx_movietheater_hall($uid)	{
-		$this->data = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_halls',sprintf('uid = %d',$uid)));// query db
+	function tx_movietheater_hall(array $data)	{
+		$this->data = $data;
 		if(empty($this->data))throw new Exception('couldn\'t find hall');// check result
 		//print('<pre>');var_dump($this);die('</pre>');
 	}
   
-	function __get($name){return $this->data[$name];}
+	function __get($name){switch($name){
+		default: return $this->data[$name];
+	}}
+
+	public static function query($uid){
+		return array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_halls',sprintf('uid = %d',$uid)));// query db
+	}
 	
 }
 

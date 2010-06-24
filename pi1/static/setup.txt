@@ -3,8 +3,8 @@ page.includeCSS.tx_movietheater_pi1 = {$plugin.tx_movietheater_pi1.css}
 ### rendering for "specials" ###################################################
 tx_movietheater_specials = CASE
 tx_movietheater_specials{
-	image = IMAGE
-	image{
+	default = IMAGE
+	default{
 		file.import = uploads/tx_movietheater/
 	  file.import.field = image
 	  file.import.listNum = 0
@@ -12,7 +12,6 @@ tx_movietheater_specials{
 	}
 	text = TEXT
 	text.field = title
-	default < .image
 }
 
 ### rendering for "versions" ###################################################
@@ -26,199 +25,279 @@ tx_movietheater_versions{
 	wrap = <em>|</em>
 }
 
-### rendering for "films" ######################################################
-tx_movietheater_films = TEMPLATE
-tx_movietheater_films {
-	template = FILE
-	template.file = {$plugin.tx_movietheater_pi1.template}
-	workOnSubpart = SINGLEVIEW
-	marks {
-		UID = TEXT
-		UID.field = uid
-		TITLE = TEXT
-		TITLE.field = title
-		ORIGINALTITLE = TEXT
-		ORIGINALTITLE.field = originaltitle
-		SPECIAL = RECORDS
-		SPECIAL.tables = tx_movietheater_specials
-		SPECIAL.source.field = special
-		SPECIAL_TITLE < .SPECIAL
-		SPECIAL_TITLE.conf.tx_movietheater_specials < tx_movietheater_specials.text
-		CREDITS = TEXT
-		CREDITS.field = credits
-		TEASER = TEXT
-		TEASER.field = teaser
-		DESCRIPTION = TEXT
-		DESCRIPTION.field = description
-		IMAGES = TEXT
-		IMAGES.field = images
-		IMAGES.split{
-			token = ,
-			cObjNum = 1
-			1.10 = IMAGE
-			1.10.file.import = uploads/tx_movietheater/
-			1.10.file.import.current = 1
-			1.10.file.import.listNum = 0
-		}
-		IMDB = TEXT
-		IMDB.field = imdb
-		YEAR = TEXT
-		YEAR.field = year
-		VERSION = RECORDS
-		VERSION.tables = tx_movietheater_versions
-		VERSION.source.field = version
-		COUNTRY = TEXT
-		COUNTRY.field = country
-		SHOWS = CONTENT
-		SHOWS{
-			table = tx_movietheater_shows
-			select.pidInList.data = register:storage
-			select.andWhere = film={field:uid}
-			select.andWhere.insertData = 1
-			select.orderBy = date ASC
-			wrap = <dl class="shows">|</dl> 
-		}
-		BACK = TEXT
-		BACK.value = <a href="javascript:history.back();">Zurück</a>
+### general rendering for "halls" ##############################################
+tx_movietheater_halls = CASE
+tx_movietheater_halls{
+	default = COA
+	default{
+		10 = TEXT
+		10.field = name
 	}
 }
 
-### rendering for "shows" ######################################################
-tx_movietheater_shows = TEMPLATE
-tx_movietheater_shows {
+### rendering for "films" ######################################################
+tx_movietheater_films = CASE
+tx_movietheater_films{
+	default = TEMPLATE
+	default{
+		template = FILE
+		template.file = {$plugin.tx_movietheater_pi1.template}
+		workOnSubpart = SINGLEVIEW
+		marks {
+			UID = TEXT
+			UID.field = uid
+			TITLE = TEXT
+			TITLE.field = title
+			TITLE.typolink.parameter.data = register:singleview
+			TITLE.typolink.useCacheHash = 1
+			TITLE.typolink.additionalParams.field = uid 
+			TITLE.typolink.additionalParams.wrap = &tx_movietheater_pi1[film]=|
+			ORIGINALTITLE = TEXT
+			ORIGINALTITLE.field = originaltitle
+			CREDITS = TEXT
+			CREDITS.field = credits
+			TEASER = TEXT
+			TEASER.field = teaser
+			DESCRIPTION = TEXT
+			DESCRIPTION.field = description
+			IMAGES = TEXT
+			IMAGES.field = images
+			IMAGES.split{
+				token = ,
+				cObjNum = 1
+				1.10 = IMAGE
+				1.10.file.import = uploads/tx_movietheater/
+				1.10.file.import.current = 1
+				1.10.file.import.listNum = 0
+				1.10.file.height = 100
+			}
+			IMDB = TEXT
+			IMDB.field = imdb
+			YEAR = TEXT
+			YEAR.field = year
+			COUNTRY = TEXT
+			COUNTRY.field = country
+			SPECIAL = RECORDS
+			SPECIAL.tables = tx_movietheater_specials
+			SPECIAL.source.field = special
+			SPECIAL_TITLE < .SPECIAL
+			SPECIAL_TITLE.conf.tx_movietheater_specials < tx_movietheater_specials.text
+			VERSION = RECORDS
+			VERSION.tables = tx_movietheater_versions
+			VERSION.source.field = version
+			SHOWS = CONTENT
+			SHOWS{
+				table = tx_movietheater_shows
+				select.pidInList.data = register:storage
+				select.andWhere = film={field:uid}
+				select.andWhere.insertData = 1
+				select.orderBy = date ASC
+				wrap = <dl class="shows">|</dl> 
+			}
+		}
+	}
+	dayview = TEMPLATE
+	dayview{
+		template = TEXT
+		template.data = register:SUBPART_FILM
+		marks < tx_movietheater_films.default.marks
+		marks.SPECIAL >
+		marks.SPECIAL_TITLE >
+		marks.VERSION >
+		marks.SHOWS >
+	}
+	weekview < .dayview
+	monthview < .weekview
+}
+
+### general rendering for "shows" ##############################################
+tx_movietheater_shows = CASE
+tx_movietheater_shows{
+	default = COA
+	default{
+		10 = RECORDS
+		10.tables = tx_movietheater_halls
+		10.source.field = hall
+		10.wrap = <dt>|</dt>
+		20 = TEXT
+		20.field = date
+		20.date = d.m.Y H:i:s
+		20.wrap = <dd>|</dd>
+		wrap = <dl class="shows">|</dl>
+	}
+	dayview = TEMPLATE
+	dayview{
+		template = TEXT
+		template.data = register:SUBPART_SHOW
+		marks{
+			HALL = CONTENT
+			HALL{
+				table = tx_movietheater_halls
+				select.pidInList.data = register:storage
+				select.andWhere = uid = {field:hall}
+				select.andWhere.insertData = 1
+				renderObj = TEXT
+				renderObj.field = name 
+			}
+			TIME = TEXT
+			TIME.field = date
+			TIME.date = H:i:s
+		}
+		subparts{
+			FILM = CONTENT
+			FILM{
+				table = tx_movietheater_films
+				select.pidInList.data = register:storage
+				select.andWhere = uid = {field:film}
+				select.andWhere.insertData = 1
+				renderObj < tx_movietheater_films.dayview
+			}
+		}
+	}
+	weekview < .dayview
+	weekview.subparts.FILM.renderObj >
+	weekview.subparts.FILM.renderObj < tx_movietheater_films.weekview
+	weekview.marks.TIME.date = d.m.Y H:i:s
+	monthview < .weekview
+	monthview.subparts.FILM.renderObj >
+	monthview.subparts.FILM.renderObj < tx_movietheater_films.monthview
+}
+
+### rendering for "dayview" ######################################################
+tx_movietheater_dayview = TEMPLATE
+tx_movietheater_dayview {
 	template = FILE
 	template.file = {$plugin.tx_movietheater_pi1.template}
-	workOnSubpart = LISTVIEW
-	marks {	
-		HALL = CONTENT
-		HALL.table = tx_movietheater_halls
-		HALL.select.pidInList.data = register:storage
-		HALL.select.andWhere.dataWrap = uid={field:hall}
-		HALL.renderObj = COA
-		HALL.renderObj{
-			10 = TEXT
-			10.field = name
-		}
-		TIME = TEXT
-		TIME.field = date
-		TIME.date = H:i
+	nonCachedSubst = 0
+	workOnSubpart = DAYVIEW
+	marks{
+		DAY = TEXT
+		DAY.field = begin
+		DAY.date = d.m.Y
+		DAY.dataWrap = {LLL:{$plugin.tx_movietheater_pi1.locallang}:dayview.headline}&nbsp;|
+		PREV = TEXT
+		PREV.field = prev
+		PREV.date = d.m.Y
+		PREV.typolink.wrap = &laquo;|
+		PREV.typolink.ATagBeforeWrap = 1
+		PREV.typolink.useCacheHash = 1
+		PREV.typolink.parameter.data = page:uid
+		PREV.typolink.additionalParams.field = prev 
+		PREV.typolink.additionalParams.wrap = &tx_movietheater_pi1[day]=|
+		NEXT < .PREV
+		NEXT.field = next
+		NEXT.date = d.m.Y
+		NEXT.typolink.wrap = |&raquo;
+		NEXT.typolink.additionalParams.field = next 
 	}
 	subparts{
-		FILM = CONTENT
-		FILM.table = tx_movietheater_films
-		FILM.select.pidInList.data = register:storage
-		FILM.select.andWhere.dataWrap = uid={field:film}
-		FILM.renderObj < tx_movietheater_films
-		FILM.renderObj.template >
-		FILM.renderObj.template = TEXT
-		FILM.renderObj.template.data = TSFE:register|SUBPART_FILM
-		FILM.renderObj.workOnSubpart >
-		FILM.renderObj.marks{
-			TITLE.typolink.parameter.data = register:singleview
-			TITLE.typolink.additionalParams.field = uid
-			TITLE.typolink.additionalParams.wrap = &tx_movietheater_pi1[film]=|
-		}
-	}
-}
-
-### COA with flexform data fields: #############################################
-plugin.tx_movietheater_pi1{
-
-	 1 = LOAD_REGISTER
-	 1.storage.field = ext.store
-	 1.singleview = 29
-
-	10 = CASE
-	10.key.field = ff.tab1.mode
-	10{
-	
-		automatic = TEXT
-		automatic.value = This is automatic view!
-		
-		singleview = CONTENT
-		singleview{
-			table = tx_movietheater_films
+		SHOW = CONTENT
+		SHOW{
+			table = tx_movietheater_shows
 			select.pidInList.data = register:storage
-			select.andWhere.data = GPvar:tx_movietheater_pi1|film
-			select.andWhere.override.field = ff.tab1.film
-			select.andWhere.noTrimWrap = | uid = | |
+			select.andWhere = ( date BETWEEN {field:begin} AND {field:end} )
+			select.andWhere.insertData = 1
+			select.orderBy = date ASC
+			renderObj < tx_movietheater_shows.dayview
 		}
-		
-		dayview = TEMPLATE
-		dayview {
-			template = FILE
-			template.file = {$plugin.tx_movietheater_pi1.template}
-			workOnSubpart = DAYVIEW
-			marks {
-				PREV = TEXT
-				PREV.data = LLL:{$plugin.tx_movietheater_pi1.locallang}:prev
-				PREV.typolink.parameter.data = page:uid
-				PREV.typolink.no_cache = 1
-				PREV.typolink.additionalParams.cObject = COA
-				PREV.typolink.additionalParams.cObject{
-					10 = TEXT
-					10.cObject = TEXT
-					10.cObject.field = midnight
-					10.cObject.override.data = GPvar:tx_movietheater_pi1|from
-					10.cObject.wrap = |-86400
-					10.prioriCalc = 1
-					10.wrap = &tx_movietheater_pi1[from]=|
-					20 < .10
-					20.cObject.wrap = |+0
-					20.wrap = &tx_movietheater_pi1[to]=|
-				}
-				NEXT < .PREV
-				NEXT.data = LLL:{$plugin.tx_movietheater_pi1.locallang}:next
-				NEXT.typolink.additionalParams.cObject.10.cObject.wrap = |+86400
-				NEXT.typolink.additionalParams.cObject.20.cObject.wrap = |+86400+86400
-				DAY = TEXT
-				DAY.field = midnight
-				DAY.override.data = GPvar:tx_movietheater_pi1|from
-				DAY.strftime = %A %e %B %Y
-				HEADLINE = TEXT
-				HEADLINE.data = LLL:{$plugin.tx_movietheater_pi1.locallang}:dayview.headline
-			}
-			subparts{
-				SHOW = CONTENT
-				SHOW.table = tx_movietheater_shows
-				SHOW.select.pidInList.data = register:storage
-				SHOW.select.orderBy = hall ASC
-				SHOW.select.andWhere.cObject = COA
-				SHOW.select.andWhere.cObject{
-					10 = TEXT
-					10.data = GPvar:tx_movietheater_pi1|from
-					10.noTrimWrap = |tx_movietheater_shows.date > ||
-					20 = TEXT
-					20.value = AND
-					20.noTrimWrap = | | |
-					30 = TEXT
-					30.data = GPvar:tx_movietheater_pi1|to
-					30.noTrimWrap = |tx_movietheater_shows.date < ||
-				}
-				SHOW.renderObj < tx_movietheater_shows
-				SHOW.renderObj.template >
-				SHOW.renderObj.template = TEXT
-				SHOW.renderObj.template.data = TSFE:register|SUBPART_SHOW
-				SHOW.renderObj.workOnSubpart >
-			}
-		}
-
-		weekview = TEXT
-		weekview.value = This is week view!
-		
-		monthview = TEXT
-		monthview.value = This is month view!
-		
 	}
-	
 }
 
-### DEBUG ######################################################################
-plugin.tx_movietheater_pi1.20 >
-plugin.tx_movietheater_pi1.20 = COA
-plugin.tx_movietheater_pi1.20{
-  10 = TEXT
-  10.data = debug:data
-  10.wrap = <hr/>|<hr/>
+### rendering for "weekview" ######################################################
+tx_movietheater_weekview = TEMPLATE
+tx_movietheater_weekview {
+	template = FILE
+	template.file = {$plugin.tx_movietheater_pi1.template}
+	nonCachedSubst = 0
+	workOnSubpart = WEEKVIEW
+	marks{
+		WEEK = COA
+		WEEK.10 = TEXT
+		WEEK.10.field = begin
+		WEEK.10.date = d.m.Y
+		WEEK.10.dataWrap = {LLL:{$plugin.tx_movietheater_pi1.locallang}:weekview.headline}&nbsp;|&nbsp;
+		WEEK.20 = TEXT
+		WEEK.20.field = end
+		WEEK.20.date = d.m.Y
+		WEEK.20.dataWrap = {LLL:{$plugin.tx_movietheater_pi1.locallang}:weekview.to}&nbsp;|
+		PREV = TEXT
+		PREV.field = prev
+		PREV.date = d.m.Y
+		PREV.typolink.wrap = &laquo;|
+		PREV.typolink.ATagBeforeWrap = 1
+		PREV.typolink.useCacheHash = 1
+		PREV.typolink.parameter.data = page:uid
+		PREV.typolink.additionalParams.field = prev 
+		PREV.typolink.additionalParams.wrap = &tx_movietheater_pi1[week]=|
+		NEXT < .PREV
+		NEXT.field = next
+		NEXT.date = d.m.Y
+		NEXT.typolink.wrap = |&raquo;
+		NEXT.typolink.additionalParams.field = next 
+	}
+	subparts{
+		SHOW = CONTENT
+		SHOW{
+			table = tx_movietheater_shows
+			select.pidInList.data = register:storage
+			select.andWhere = ( date BETWEEN {field:begin} AND {field:end} )
+			select.andWhere.insertData = 1
+			select.orderBy = date ASC
+			renderObj < tx_movietheater_shows.weekview
+		}
+	}
 }
-### DEBUG ######################################################################
+
+### rendering for "monthview" ######################################################
+tx_movietheater_monthview = TEMPLATE
+tx_movietheater_monthview {
+	template = FILE
+	template.file = {$plugin.tx_movietheater_pi1.template}
+	nonCachedSubst = 0
+	workOnSubpart = MONTHVIEW
+	marks{
+		MONTH = COA
+		MONTH.10 = TEXT
+		MONTH.10.field = begin
+		MONTH.10.date = d.m.Y
+		MONTH.10.dataWrap = {LLL:{$plugin.tx_movietheater_pi1.locallang}:monthview.headline}&nbsp;|&nbsp;
+		MONTH.20 = TEXT
+		MONTH.20.field = end
+		MONTH.20.date = d.m.Y
+		MONTH.20.dataWrap = {LLL:{$plugin.tx_movietheater_pi1.locallang}:monthview.to}&nbsp;|
+		PREV = TEXT
+		PREV.field = prev
+		PREV.date = d.m.Y
+		PREV.typolink.wrap = &laquo;|
+		PREV.typolink.ATagBeforeWrap = 1
+		PREV.typolink.useCacheHash = 1
+		PREV.typolink.parameter.data = page:uid
+		PREV.typolink.additionalParams.field = prev 
+		PREV.typolink.additionalParams.wrap = &tx_movietheater_pi1[month]=|
+		NEXT < .PREV
+		NEXT.field = next
+		NEXT.date = d.m.Y
+		NEXT.typolink.wrap = |&raquo;
+		NEXT.typolink.additionalParams.field = next 
+	}
+	subparts{
+		SHOW = CONTENT
+		SHOW{
+			table = tx_movietheater_shows
+			select.pidInList.data = register:storage
+			select.andWhere = ( date BETWEEN {field:begin} AND {field:end} )
+			select.andWhere.insertData = 1
+			select.orderBy = date ASC
+			renderObj < tx_movietheater_shows.monthview
+		}
+	}
+}
+
+################################################################################
+
+plugin.tx_movietheater_pi1{
+	singleview < tx_movietheater_films
+	dayview < tx_movietheater_dayview
+	weekview < tx_movietheater_weekview
+	monthview < tx_movietheater_monthview
+}

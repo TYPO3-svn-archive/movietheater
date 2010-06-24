@@ -32,19 +32,26 @@
 class tx_movietheater_special{
   private $data = null;
   
-	function tx_movietheater_special($uid)	{
-		$this->data = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_specials',sprintf('uid = %d',$uid)));// query db
+	function tx_movietheater_special(array $data){
+		$this->data = $data;
 		if(empty($this->data))throw new Exception('couldn\'t find special');// check result
 		//print('<pre>');print_r($this);die('</pre>');/*DEBUG*/
 	}
   
-	function __get($name){if( $name == 'marker' )return $this->marker(); else return $this->data[$name];}
+	function __get($name){switch($name){
+		case 'marker': return $this->marker();
+		default: return $this->data[$name];
+	}}
 
 	public function marker($prefix=''){
 		$result = array();
 		foreach( $this->data as $key => $val )$result['###'.$prefix.strtoupper($key).'###'] = $val;
 		$result['###'.$prefix.'IMAGE###'] = 'uploads/tx_movietheater/'.$result['###'.$prefix.'IMAGE###'];
 		return $result;
+	}
+	
+	public static function query($uid){
+		return array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','tx_movietheater_specials',sprintf('uid = %d',$uid)));// query db
 	}
 	
 }
